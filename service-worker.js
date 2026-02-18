@@ -1,18 +1,20 @@
-/**
- * Service Worker de DoseSync - PWA
- * Precache de recursos principales y estrategia cache-first para uso offline.
- */
-
 const CACHE_NAME = 'dosesync-v1';
-// Rutas relativas al service worker para que funcione en cualquier ruta base
 const PRECACHE_URLS = [
-  './',
-  'index.html',
-  'styles.css',
-  'app.js',
-  'manifest.json'
+  '/dosesync/',
+  '/dosesync/index.html',
+  '/dosesync/styles.css',
+  '/dosesync/app.js',
+  '/dosesync/manifest.json',
+  '/dosesync/img/logo.png'
 ];
 
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(PRECACHE_URLS))
+      .then(self.skipWaiting())
+  );
+});
 // Instalación: precache de recursos
 self.addEventListener('install', function (event) {
   event.waitUntil(
