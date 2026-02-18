@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e3a5f">
+  <meta name="description" content="DoseSync - Control de medicación y recordatorios">
+  <title>DoseSync</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ========== ONBOARDING (3 slides) ========== -->
+  <section id="onboarding" class="onboarding">
+    <div class="onboarding-slides">
+      <!-- Slide 1: Logo -->
+      <div class="onboarding-slide active" data-slide="0">
+        <div class="slide-content">
+          <div class="logo-container">
+            <img src="img/logo.png" alt="" class="logo-img" width="120" height="80">
+            <div class="logo" aria-hidden="true">DoseSync</div>
+          </div>
+          <p class="slide-text">Tu compañero para el control de medicación</p>
+        </div>
+      </div>
+      <!-- Slide 2: Mensaje control medicación -->
+      <div class="onboarding-slide" data-slide="1">
+        <div class="slide-content">
+          <div class="logo-container small">
+            <img src="img/logo.png" alt="" class="logo-img small" width="80" height="54">
+            <div class="logo small">DoseSync</div>
+          </div>
+          <p class="slide-text">Nunca olvides tomar tu medicación. Programamos recordatorios a tu medida.</p>
+        </div>
+      </div>
+      <!-- Slide 3: Mensaje + CTA -->
+      <div class="onboarding-slide" data-slide="2">
+        <div class="slide-content">
+          <div class="logo-container small">
+            <img src="img/logo.png" alt="" class="logo-img small" width="80" height="54">
+            <div class="logo small">DoseSync</div>
+          </div>
+          <p class="slide-text">Registra tus tomas y consulta información de prevención en salud.</p>
+        </div>
+      </div>
+    </div>
+    <div class="onboarding-actions">
+      <button type="button" id="btn-onboarding-next" class="btn btn-primary">Siguiente</button>
+    </div>
+  </section>
+
+  <!-- ========== LOGIN ========== -->
+  <section id="login" class="login-section hidden">
+    <div class="login-card">
+      <div class="logo-container small">
+        <img src="img/logo.png" alt="" class="logo-img small" width="80" height="54">
+        <div class="logo small">DoseSync</div>
+      </div>
+      <h1>Iniciar sesión</h1>
+      <form id="form-login" class="form">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="tu@email.com" autocomplete="email">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== APP PRINCIPAL (después del login) ========== -->
+  <main id="app-main" class="app-main hidden">
+    <!-- Header con logo (visible en Home y contexto global) -->
+    <header class="app-header">
+      <div class="logo-container header">
+        <img src="img/logo.png" alt="" class="logo-img header" width="40" height="27">
+        <div class="logo header">DoseSync</div>
+      </div>
+    </header>
+
+    <!-- Contenedor de pantallas -->
+    <div class="screens">
+      <!-- Pantalla Home -->
+      <section id="screen-home" class="screen active">
+        <div class="screen-inner">
+          <h2>Datos curiosos</h2>
+          <div id="home-curiosidades" class="curiosidades-list"></div>
+        </div>
+      </section>
+
+      <!-- Pantalla Recordatorios -->
+      <section id="screen-recordatorios" class="screen">
+        <div class="screen-inner">
+          <h2>Agregar medicamento</h2>
+          <form id="form-medicamento" class="form form-card">
+            <label for="med-nombre">Nombre del medicamento</label>
+            <input type="text" id="med-nombre" name="nombre" required placeholder="Ej. Paracetamol">
+            <label for="med-dosis">Dosis</label>
+            <input type="text" id="med-dosis" name="dosis" required placeholder="Ej. 500 mg">
+            <label for="med-hora">Hora del recordatorio</label>
+            <input type="time" id="med-hora" name="hora" required>
+            <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+          </form>
+          <h3>Mis medicamentos</h3>
+          <ul id="lista-medicamentos" class="lista-medicamentos"></ul>
+        </div>
+      </section>
+
+      <!-- Pantalla Prevención -->
+      <section id="screen-prevencion" class="screen">
+        <div class="screen-inner">
+          <h2>Prevención en salud</h2>
+          <div class="prevencion-blocks">
+            <article class="prevencion-block" data-tema="hipertension">
+              <button type="button" class="prevencion-titulo" aria-expanded="false" aria-controls="content-hipertension" id="toggle-hipertension">
+                Hipertensión
+              </button>
+              <div id="content-hipertension" class="prevencion-contenido" hidden>
+                <h4>Descripción</h4>
+                <p>La hipertensión es la elevación sostenida de la presión arterial. Aumenta el riesgo de infarto y accidente cerebrovascular.</p>
+                <h4>Síntomas tempranos</h4>
+                <p>Dolor de cabeza, mareos, visión borrosa, zumbido de oídos. A veces no hay síntomas.</p>
+                <h4>Señales de alerta</h4>
+                <p>Presión muy alta (crisis hipertensiva), dolor de pecho, dificultad para hablar o mover un lado del cuerpo.</p>
+                <h4>Recomendaciones básicas</h4>
+                <p>Reducir sal, mantener peso saludable, ejercicio regular, no fumar, controlar la presión con frecuencia.</p>
+              </div>
+            </article>
+            <article class="prevencion-block" data-tema="diabetes">
+              <button type="button" class="prevencion-titulo" aria-expanded="false" aria-controls="content-diabetes" id="toggle-diabetes">
+                Diabetes
+              </button>
+              <div id="content-diabetes" class="prevencion-contenido" hidden>
+                <h4>Descripción</h4>
+                <p>La diabetes es una enfermedad en la que el nivel de glucosa en sangre está elevado. Puede ser tipo 1 o tipo 2.</p>
+                <h4>Síntomas tempranos</h4>
+                <p>Mucha sed, ganas de orinar frecuentes, cansancio, visión borrosa, pérdida de peso sin causa aparente.</p>
+                <h4>Señales de alerta</h4>
+                <p>Glucosa muy alta o muy baja, confusión, temblores, desmayo. En emergencias buscar ayuda médica.</p>
+                <h4>Recomendaciones básicas</h4>
+                <p>Dieta equilibrada, control de carbohidratos, ejercicio, medicación si la indica el médico, medición de glucosa.</p>
+              </div>
+            </article>
+            <article class="prevencion-block" data-tema="vih">
+              <button type="button" class="prevencion-titulo" aria-expanded="false" aria-controls="content-vih" id="toggle-vih">
+                VIH
+              </button>
+              <div id="content-vih" class="prevencion-contenido" hidden>
+                <h4>Descripción</h4>
+                <p>El VIH (virus de la inmunodeficiencia humana) afecta al sistema inmunitario. Sin tratamiento puede derivar en sida. Hoy existen tratamientos que permiten una vida larga y saludable.</p>
+                <h4>Síntomas tempranos</h4>
+                <p>Fiebre, dolor de garganta, cansancio, ganglios inflamados, erupción cutánea. Muchas personas no tienen síntomas al inicio.</p>
+                <h4>Señales de alerta</h4>
+                <p>Infecciones recurrentes, pérdida de peso, fiebre persistente, candidiasis oral. Ante duda, realizar la prueba.</p>
+                <h4>Recomendaciones básicas</h4>
+                <p>Usar preservativo, no compartir jeringuillas, hacerse la prueba si hay riesgo. Si hay diagnóstico: adherencia al tratamiento y controles médicos.</p>
+              </div>
+            </article>
+            <article class="prevencion-block" data-tema="sinusitis">
+              <button type="button" class="prevencion-titulo" aria-expanded="false" aria-controls="content-sinusitis" id="toggle-sinusitis">
+                Sinusitis
+              </button>
+              <div id="content-sinusitis" class="prevencion-contenido" hidden>
+                <h4>Descripción</h4>
+                <p>La sinusitis es la inflamación de los senos paranasales, a menudo tras un resfriado o alergia. Puede ser aguda o crónica.</p>
+                <h4>Síntomas tempranos</h4>
+                <p>Congestión nasal, dolor o presión en la cara, dolor de cabeza, goteo nasal espeso, reducción del olfato.</p>
+                <h4>Señales de alerta</h4>
+                <p>Fiebre alta, dolor facial intenso, hinchazón alrededor de los ojos, visión doble o cambios en la visión. Requieren valoración médica.</p>
+                <h4>Recomendaciones básicas</h4>
+                <p>Lavados nasales con suero, humidificar el ambiente, descansar. Si no mejora en unos días o hay fiebre, consultar al médico.</p>
+              </div>
+            </article>
+            <article class="prevencion-block" data-tema="dengue">
+              <button type="button" class="prevencion-titulo" aria-expanded="false" aria-controls="content-dengue" id="toggle-dengue">
+                Dengue
+              </button>
+              <div id="content-dengue" class="prevencion-contenido" hidden>
+                <h4>Descripción</h4>
+                <p>El dengue es una enfermedad viral transmitida por el mosquito Aedes aegypti. Es frecuente en zonas tropicales y subtropicales.</p>
+                <h4>Síntomas tempranos</h4>
+                <p>Fiebre alta, dolor de cabeza fuerte, dolor detrás de los ojos, dolor muscular y articular, náuseas y erupción.</p>
+                <h4>Señales de alerta</h4>
+                <p>Dolor abdominal intenso, vómitos persistentes, sangrado de encías o nariz, dificultad para respirar, deshidratación. Buscar atención urgente.</p>
+                <h4>Recomendaciones básicas</h4>
+                <p>Eliminar criaderos de mosquitos (agua estancada), usar repelente y ropa que cubra. Reposo, hidratación y no automedicarse con aspirina o ibuprofeno sin indicación.</p>
+              </div>
+            </article>
+            <article class="prevencion-block" data-tema="migrana">
+              <button type="button" class="prevencion-titulo" aria-expanded="false" aria-controls="content-migrana" id="toggle-migrana">
+                Migraña
+              </button>
+              <div id="content-migrana" class="prevencion-contenido" hidden>
+                <h4>Descripción</h4>
+                <p>La migraña es un dolor de cabeza intenso, a menudo pulsátil y en un lado, que puede ir acompañado de náuseas, vómitos y sensibilidad a la luz o al ruido.</p>
+                <h4>Síntomas tempranos</h4>
+                <p>Aura visual (destellos, líneas), hormigueo, dolor que empieza leve y aumenta. A veces cambios de humor o hambre antes del episodio.</p>
+                <h4>Señales de alerta</h4>
+                <p>Dolor de cabeza “peor de la vida”, fiebre, rigidez de cuello, debilidad o entumecimiento. Pueden indicar otra causa y requieren valoración urgente.</p>
+                <h4>Recomendaciones básicas</h4>
+                <p>Identificar desencadenantes (estrés, sueño, alimentos), descansar en lugar oscuro y silencioso, hidratación. Seguir el tratamiento indicado por el médico.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pantalla Historial -->
+      <section id="screen-historial" class="screen">
+        <div class="screen-inner">
+          <h2>Historial de tomas</h2>
+          <ul id="lista-historial" class="lista-historial"></ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom navigation -->
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <button type="button" class="nav-item active" data-screen="home" aria-current="page">
+        <span class="nav-icon" aria-hidden="true">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button type="button" class="nav-item" data-screen="recordatorios">
+        <span class="nav-icon" aria-hidden="true">💊</span>
+        <span class="nav-label">Recordatorios</span>
+      </button>
+      <button type="button" class="nav-item" data-screen="prevencion">
+        <span class="nav-icon" aria-hidden="true">🩺</span>
+        <span class="nav-label">Prevención</span>
+      </button>
+      <button type="button" class="nav-item" data-screen="historial">
+        <span class="nav-icon" aria-hidden="true">📊</span>
+        <span class="nav-label">Historial</span>
+      </button>
+    </nav>
+  </main>
+
+  <!-- Modal recordatorio (Tomado / Omitido) -->
+  <div id="modal-recordatorio" class="modal hidden" role="alertdialog" aria-labelledby="modal-recordatorio-titulo" aria-modal="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <p id="modal-recordatorio-titulo" class="modal-titulo"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-success" id="modal-btn-tomado">✅ Tomado</button>
+        <button type="button" class="btn btn-danger" id="modal-btn-omitido">❌ Omitido</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
