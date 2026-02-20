@@ -1,14 +1,12 @@
 /**
  * DoseSync - PWA Integrada con Firebase
- * Backend: Firebase Auth (Login) y Firestore (Base de datos en tiempo real)
+ * Backend: Firebase Auth y Firestore (Tiempo real)
  */
 
-// 1. Importaciones de Firebase (CDN)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// 2. Tu configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCyvwbjWl1CX9cHu1jKFnvW-7KvJg2A4-A",
   authDomain: "dosesync2026.firebaseapp.com",
@@ -18,17 +16,14 @@ const firebaseConfig = {
   appId: "1:816346985499:web:708b2522469ae9130734be"
 };
 
-// 3. Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Variables Globales
 let currentUser = null;
 let currentUserRole = null;
 let recordatorioTimeouts = {};
 
-// Referencias DOM
 const onboarding = document.getElementById('onboarding');
 const loginSection = document.getElementById('login');
 const appMain = document.getElementById('app-main');
@@ -37,24 +32,20 @@ const formLogin = document.getElementById('form-login');
 const btnRegistrar = document.getElementById('btn-registrar');
 const navItems = document.querySelectorAll('.nav-item');
 const screens = document.querySelectorAll('.screen');
+const btnOnboardingNext = document.getElementById('btn-onboarding-next');
 
-// ---------- ESTADO DE AUTENTICACIÓN (EL CEREBRO DE LA APP) ----------
+// ---------- ESTADO DE AUTENTICACIÓN ----------
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    // Usuario logueado
     currentUser = user;
     const userDoc = await getDoc(doc(db, "usuarios", user.uid));
     
     if (userDoc.exists()) {
       currentUserRole = userDoc.data().rol;
-      if (currentUserRole === 'enfermero') {
-        showAppNurse();
-      } else {
-        showApp();
-      }
+      if (currentUserRole === 'enfermero') showAppNurse();
+      else showApp();
     }
   } else {
-    // Usuario desconectado
     currentUser = null;
     currentUserRole = null;
     clearAllTimeouts();
@@ -64,16 +55,37 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// ---------- ONBOARDING ----------
+// ---------- ONBOARDING (RESTAUARDO CON SLIDES) ----------
 function showOnboarding() {
   onboarding.classList.remove('hidden');
   loginSection.classList.add('hidden');
   appMain.classList.add('hidden');
   appNurse.classList.add('hidden');
-  document.getElementById('btn-onboarding-next').addEventListener('click', () => {
+  
+  setOnboardingSlide(0);
+  btnOnboardingNext.removeEventListener('click', onOnboardingNext); // Evitar duplicados
+  btnOnboardingNext.addEventListener('click', onOnboardingNext);
+}
+
+function setOnboardingSlide(index) {
+  const slides = document.querySelectorAll('.onboarding-slide');
+  slides.forEach((s, i) => s.classList.toggle('active', i === index));
+  const isLast = index === slides.length - 1;
+  btnOnboardingNext.textContent = isLast ? 'Comenzar' : 'Siguiente';
+}
+
+function onOnboardingNext() {
+  const slides = document.querySelectorAll('.onboarding-slide');
+  const current = document.querySelector('.onboarding-slide.active');
+  const currentIndex = parseInt(current.getAttribute('data-slide') || 0, 10);
+  const nextIndex = currentIndex + 1;
+
+  if (nextIndex >= slides.length) {
     localStorage.setItem('dosesync_onboarding_done', 'true');
     showLogin();
-  });
+  } else {
+    setOnboardingSlide(nextIndex);
+  }
 }
 
 // ---------- LOGIN Y REGISTRO ----------
@@ -84,20 +96,17 @@ function showLogin() {
   appNurse.classList.add('hidden');
 }
 
-// Entrar
 formLogin.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    // onAuthStateChanged se disparará automáticamente
   } catch (error) {
-    alert("Error al entrar: Revisa tu contraseña o correo.");
+    alert("Error: Verifica tu correo o contraseña.");
   }
 });
 
-// Registrar
 btnRegistrar.addEventListener('click', async () => {
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
@@ -109,21 +118,15 @@ btnRegistrar.addEventListener('click', async () => {
   }
 
   try {
-    // 1. Crea el usuario en Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    // 2. Guarda su rol en la base de datos Firestore
-    await setDoc(doc(db, "usuarios", user.uid), {
-      email: email,
-      rol: rol
-    });
+    await setDoc(doc(db, "usuarios", user.uid), { email: email, rol: rol });
     alert("¡Cuenta creada con éxito!");
   } catch (error) {
     alert("Error al registrar: " + error.message);
   }
 });
 
-// Botones de Salir
 document.getElementById('btn-logout-patient').addEventListener('click', () => signOut(auth));
 document.getElementById('btn-logout-nurse').addEventListener('click', () => signOut(auth));
 
@@ -136,8 +139,6 @@ function showApp() {
   
   navItems.forEach(item => item.addEventListener('click', onNavClick));
   loadCuriosidades();
-  
-  // Activar escucha en tiempo real de Firebase para este paciente
   listenMedicamentos();
   listenHistorial();
 }
@@ -146,19 +147,16 @@ function onNavClick(e) {
   const screenId = e.currentTarget.getAttribute('data-screen');
   screens.forEach(s => s.classList.toggle('active', s.id.replace('screen-', '') === screenId));
   navItems.forEach(item => {
-    const isActive = item.getAttribute('data-screen') === screenId;
-    item.classList.toggle('active', isActive);
+    item.classList.toggle('active', item.getAttribute('data-screen') === screenId);
   });
 }
 
 function loadCuriosidades() {
   const contenedor = document.getElementById('home-curiosidades');
-  contenedor.innerHTML = '<div class="curiosidad-card"><h4>Hora de toma</h4><p>Tomar los medicamentos a la misma hora cada día ayuda a mantener niveles estables en sangre y mejora la adherencia.</p></div>';
+  contenedor.innerHTML = '<div class="curiosidad-card"><h4>Hora de toma</h4><p>Tomar los medicamentos a la misma hora cada día ayuda a mantener niveles estables en sangre.</p></div>';
 }
 
-// ---------- FIRESTORE: PACIENTES (GUARDAR Y LEER) ----------
-
-// Guardar nuevo medicamento en Firestore
+// ---------- FIRESTORE: PACIENTES ----------
 document.getElementById('form-medicamento').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nombre = document.getElementById('med-nombre').value.trim();
@@ -176,19 +174,17 @@ document.getElementById('form-medicamento').addEventListener('submit', async (e)
   document.getElementById('form-medicamento').reset();
 });
 
-// Escuchar medicamentos del paciente en Tiempo Real
 function listenMedicamentos() {
   const q = query(collection(db, "medicamentos"), where("uid", "==", currentUser.uid));
   onSnapshot(q, (snapshot) => {
     const lista = document.getElementById('lista-medicamentos');
     lista.innerHTML = '';
-    clearAllTimeouts(); // Limpiar alarmas viejas
+    clearAllTimeouts();
 
     snapshot.forEach((docSnap) => {
       const m = docSnap.data();
       const id = docSnap.id;
       
-      // Mostrar en pantalla
       lista.innerHTML += `
         <li class="medicamento-item">
           <div class="medicamento-info">
@@ -198,18 +194,15 @@ function listenMedicamentos() {
           <button class="btn btn-sm btn-danger" onclick="eliminarMed('${id}')">Borrar</button>
         </li>`;
       
-      // Programar alarma
       programarAlarma(id, m.nombre, m.hora);
     });
   });
 }
 
-// Eliminar medicamento de Firestore (debe ser global para el onclick)
 window.eliminarMed = async function(docId) {
   await deleteDoc(doc(db, "medicamentos", docId));
 }
 
-// Escuchar historial del paciente en Tiempo Real
 function listenHistorial() {
   const q = query(collection(db, "historial"), where("uid", "==", currentUser.uid), orderBy("fecha", "desc"));
   onSnapshot(q, (snapshot) => {
@@ -227,7 +220,7 @@ function listenHistorial() {
   });
 }
 
-// ---------- ALARMAS Y REGISTRO DE TOMAS ----------
+// ---------- ALARMAS Y TOMAS ----------
 function programarAlarma(id, nombre, hora) {
   const now = new Date();
   const [hh, mm] = hora.split(':').map(Number);
@@ -235,9 +228,7 @@ function programarAlarma(id, nombre, hora) {
   if (next <= now) next.setDate(next.getDate() + 1);
   const delay = Math.max(0, next - now);
 
-  recordatorioTimeouts[id] = setTimeout(() => {
-    mostrarAlerta(nombre, hora);
-  }, delay);
+  recordatorioTimeouts[id] = setTimeout(() => mostrarAlerta(nombre, hora), delay);
 }
 
 function clearAllTimeouts() {
@@ -253,7 +244,6 @@ function mostrarAlerta(nombre, hora) {
   const btnTomado = document.getElementById('modal-btn-tomado');
   const btnOmitido = document.getElementById('modal-btn-omitido');
 
-  // Clonamos botones para quitar event listeners anteriores
   const nuevoBtnTomado = btnTomado.cloneNode(true);
   const nuevoBtnOmitido = btnOmitido.cloneNode(true);
   btnTomado.replaceWith(nuevoBtnTomado);
@@ -265,10 +255,9 @@ function mostrarAlerta(nombre, hora) {
 
 async function registrarToma(medicamento, hora, estado, modal) {
   modal.classList.add('hidden');
-  // Guardar en Firestore (¡El enfermero verá esto en tiempo real!)
   await addDoc(collection(db, "historial"), {
     uid: currentUser.uid,
-    pacienteEmail: currentUser.email, // Ayudará al enfermero a saber de quién es
+    pacienteEmail: currentUser.email,
     medicamento: medicamento,
     hora: hora,
     estado: estado,
@@ -276,14 +265,13 @@ async function registrarToma(medicamento, hora, estado, modal) {
   });
 }
 
-// ---------- INTERFAZ ENFERMERO (TIEMPO REAL) ----------
+// ---------- INTERFAZ ENFERMERO ----------
 function showAppNurse() {
   onboarding.classList.add('hidden');
   loginSection.classList.add('hidden');
   appMain.classList.add('hidden');
   appNurse.classList.remove('hidden');
 
-  // El enfermero escucha TODO el historial de todos los pacientes en tiempo real
   const q = query(collection(db, "historial"), orderBy("fecha", "desc"));
   onSnapshot(q, (snapshot) => {
     const lista = document.getElementById('lista-pacientes');
@@ -297,8 +285,6 @@ function showAppNurse() {
     snapshot.forEach((docSnap) => {
       const h = docSnap.data();
       const estadoLabel = h.estado === 'tomado' ? '✅ Tomado' : '❌ Omitido';
-      
-      // Extraer solo la hora de la fecha para mostrar (HH:MM)
       const date = new Date(h.fecha);
       const fechaLocal = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
@@ -315,7 +301,6 @@ function showAppNurse() {
   });
 }
 
-// Utilidad de seguridad
 function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
