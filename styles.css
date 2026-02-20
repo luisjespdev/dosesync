@@ -175,6 +175,16 @@ body {
   background: var(--color-primary-light);
 }
 
+.btn-secondary {
+  background: var(--color-primary-light);
+  color: var(--color-bg-white);
+  width: 100%;
+}
+
+.btn-secondary:hover {
+  background: var(--color-primary);
+}
+
 .btn-block {
   width: 100%;
 }
@@ -225,6 +235,16 @@ body {
   text-align: center;
 }
 
+.login-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.login-actions .btn {
+  flex: 1;
+}
+
 /* ---------- Formularios ---------- */
 .form label {
   display: block;
@@ -254,10 +274,6 @@ body {
   box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.15);
 }
 
-.form button[type="submit"] {
-  margin-top: 0.5rem;
-}
-
 .form-card {
   background: var(--color-card);
   padding: 1.25rem;
@@ -266,7 +282,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* ---------- App principal ---------- */
+/* ---------- App principal & Header ---------- */
 .app-main {
   min-height: 100vh;
   display: flex;
@@ -286,14 +302,12 @@ body {
   background: var(--color-primary);
   color: var(--color-bg-white);
   box-shadow: var(--shadow);
+  padding: 0 1rem;
 }
 
-.logo-container.header {
-  margin: 0;
-}
-
-.logo.header {
-  color: var(--color-bg-white);
+.header-btn-right {
+  position: absolute;
+  right: 1rem;
 }
 
 /* ---------- Pantallas (screens) ---------- */
@@ -361,7 +375,7 @@ body {
   color: var(--color-text-muted);
 }
 
-/* ---------- Recordatorios: lista medicamentos ---------- */
+/* ---------- Tarjetas de Medicamentos y Pacientes ---------- */
 .lista-medicamentos {
   list-style: none;
   padding: 0;
@@ -374,7 +388,7 @@ body {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   background: var(--color-card);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow);
@@ -388,84 +402,55 @@ body {
 .medicamento-info strong {
   display: block;
   color: var(--color-primary);
+  font-size: 1.05rem;
 }
 
 .medicamento-info span {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-}
-
-.medicamento-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-/* ---------- Prevención: acordeón ---------- */
-.prevencion-blocks {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.prevencion-block {
-  background: var(--color-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-
-.prevencion-titulo {
-  width: 100%;
-  padding: 1rem 1.25rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-align: left;
-  color: var(--color-primary);
-  background: var(--color-card);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.prevencion-titulo::after {
-  content: "+";
-  font-size: 1.25rem;
-  font-weight: 400;
-}
-
-.prevencion-block[aria-expanded="true"] .prevencion-titulo::after {
-  content: "−";
-}
-
-.prevencion-titulo:hover {
-  background: var(--color-bg);
-}
-
-.prevencion-contenido {
-  padding: 0 1.25rem 1.25rem;
-  border-top: 1px solid var(--color-card-border);
-}
-
-.prevencion-contenido[hidden] {
-  display: none;
-}
-
-.prevencion-contenido h4 {
-  margin: 1rem 0 0.35rem;
-  font-size: 0.95rem;
-  color: var(--color-primary);
-}
-
-.prevencion-contenido h4:first-child {
-  margin-top: 0;
-}
-
-.prevencion-contenido p {
-  margin: 0 0 0.5rem;
+  display: block;
   font-size: 0.9rem;
   color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+
+.medicamento-info .info-subtext {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 0.3rem;
+  opacity: 0.8;
+}
+
+/* ---------- Panel del Enfermero ---------- */
+.nurse-code-card {
+  background: var(--color-card);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border: 2px dashed var(--color-primary-light);
+  box-shadow: var(--shadow);
+}
+
+.nurse-code-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-primary);
+}
+
+.nurse-code-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+.nurse-code-text {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--color-danger);
+  background: var(--color-bg);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
 }
 
 /* ---------- Historial ---------- */
@@ -487,24 +472,25 @@ body {
   box-shadow: var(--shadow);
 }
 
-.historial-item .estado {
+.estado {
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
-.historial-item .estado.tomado {
+.estado.tomado {
   background: #ccfbf1;
   color: var(--color-success);
 }
 
-.historial-item .estado.omitido {
+.estado.omitido {
   background: #fee2e2;
   color: var(--color-danger);
 }
 
-.historial-item .estado.pendiente {
+.estado.pendiente {
   background: #fef3c7;
   color: var(--color-warning);
 }
@@ -565,13 +551,8 @@ body {
   .onboarding-slide .slide-text {
     font-size: 1.2rem;
   }
-
   .curiosidad-card {
     padding: 1.5rem;
-  }
-
-  .prevencion-titulo {
-    padding: 1.25rem;
   }
 }
 
@@ -606,6 +587,7 @@ body {
   margin: 0 0 1.25rem;
   font-size: 1.1rem;
   color: var(--color-text);
+  text-align: center;
 }
 
 .modal-actions {
@@ -622,11 +604,9 @@ body {
     padding-left: 0;
     padding-right: 0;
   }
-
   .screen-inner {
     padding: 0 1rem;
   }
-
   .bottom-nav {
     max-width: 600px;
     left: 50%;
