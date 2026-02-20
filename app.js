@@ -1,5 +1,5 @@
 /**
- * DoseSync - PWA Integrada con Firebase
+ * DoseSync - Web App Integrada con Firebase
  * Backend: Firebase Auth y Firestore (Tiempo real)
  */
 
@@ -55,7 +55,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// ---------- ONBOARDING (RESTAUARDO CON SLIDES) ----------
+// ---------- ONBOARDING ----------
 function showOnboarding() {
   onboarding.classList.remove('hidden');
   loginSection.classList.add('hidden');
@@ -63,7 +63,7 @@ function showOnboarding() {
   appNurse.classList.add('hidden');
   
   setOnboardingSlide(0);
-  btnOnboardingNext.removeEventListener('click', onOnboardingNext); // Evitar duplicados
+  btnOnboardingNext.removeEventListener('click', onOnboardingNext); 
   btnOnboardingNext.addEventListener('click', onOnboardingNext);
 }
 
